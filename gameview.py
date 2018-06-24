@@ -2,6 +2,11 @@ import os
 import celltypes as CellTypes
 import cellsymbols as CellSymbols
 import ansicodes as ANSI
+#  import curses
+
+#  screen = curses.initscr()
+#  curses.noecho()
+#  curses.cbreak()
 
 
 def screen_shape():
@@ -26,13 +31,13 @@ def render_cell(cell_code):
         return '{}{}'.format(ANSI.FG_MAGENTA, CellSymbols.CURSOR)
 
 
-def render_minefield(minefield, cursor):
+def render_minefield_lines(minefield, cursor):
     #  minefield_view = np.chararray((minefield.height, minefield.width),
     #                                unicode=True)
     minefield_view = []
-    for row_idx in range(len(minefield.minefield)):
+    for row_idx in range(len(minefield)):
         view_row = []
-        minefield_row = minefield.minefield[row_idx]
+        minefield_row = minefield[row_idx]
         for col_idx in range(len(minefield_row)):
             if row_idx == cursor[0] and col_idx == cursor[1]:
                 view_row.append(render_cell(CellTypes.CURSOR))
@@ -43,7 +48,11 @@ def render_minefield(minefield, cursor):
     return minefield_view
 
 
-def print_screen(minefield, cursor):
-    minefield_view = render_minefield(minefield, cursor)
-    for row in minefield_view:
-        print(''.join(row))
+def print_minefield(minefield, cursor):
+
+
+
+#  def print_screen(minefield, cursor):
+#      minefield_view = render_minefield(minefield, cursor)
+#      for row in minefield_view:
+#          print(''.join(row))

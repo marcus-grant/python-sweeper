@@ -1,55 +1,40 @@
-import termios
-import sys
-import tty
+#  import termios
+#  import sys
+#  import tty
 from minefieldmodel import MinefieldModel
 import gameview as gv
-
-
-def getch():
-    """gets a single character input from STDIN
-    """
-    def getch_helper():
-        fd = sys.stdin.fileno()
-        old_settings = termios.tcgetattr(fd)
-        try:
-            tty.setraw(fd)
-            ch = sys.stdin.read(1)
-        finally:
-            termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
-        return ch
-    return getch_helper()
+import curses
 
 
 class GameController:
-    def __init__(self, game_width, game_height, num_mines):
+    def __init__(self, game_width, game_height, num_mines, screen):
         self.minefield = MinefieldModel(game_width, game_height, num_mines)
-        self.cursor = (0, 0)
+        #  self.screen = self.init_screen()
+        self.screen = screen
+        self.game_is_running = True
+        self.screen = ''
         gv.clear_screen()
-        print('init with screen : {}'.format(gv.screen_shape()))
 
-    def update_screen(self):
-        gv.clear_screen()
-        gv.print_screen(self.minefield, self.cursor)
+    def map_input_to_game_action(self, inp):
+        if inp == 'KEY_UP' or inp == 'k' or inp == 'w':
+            self.minefield.move_cursor_vertically(-1)
+        elif inp == 'KEY_DOWN' or inp == 'j' or inp == 's':
+            self.minefield.move_cursor_vertically(1)
+        elif inp == 'KEY_LEFT' or inp == 'h' or inp == 'a':
+            self.minefield.move_cursor_horizontally(-1)
+        elif inp == 'KEY_RIGHT' or inp == 'l' or inp == 'd':
+            self.minefield.move_cursor_horizontally(1)
+        elif inp == 'q':
+            self.game_is_running = False
 
-    def cursor_up(self):
-        _tmp = self.cursor[0]
-        self.cursor[0] = _tmp - 1 if _tmp > 0 else _tmp
-
-    def game_loop(self):
-        while True:
-            #  self.update_screen()
-            input_key = getch()
-            import pdb; pdb.set_trace()  # XXX BREAKPOINT
-            print(repr(input_key))
-            if input_key == 'q':
-                sys.exit(0)
-
-            if input_key == '\\x1b[A':
-                #  self.cursor_up()
-                print('up')
-            elif input_key == '\x1b[B':
-                    print("down")
-            elif input_key == '\x1b[C':
-                    print("right")
-            elif input_key == '\x1b[D':
-                    print("left")
+    def play(self, screen):
+        self.screen = screen
+        while self.game_is_running:
+            # First print the screen
+            #  gv.print_screen(self.minefield.minefield, self.minefield.cursor)
+            print(self.minefield.cursor)
+            # Then wait for user input to determine what to do next
+            key = self.screen.getkey()
+            print(key)
+            #  key = self.screen.getch()
+            self.map_input_to_game_action(key)

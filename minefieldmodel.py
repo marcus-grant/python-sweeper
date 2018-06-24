@@ -19,6 +19,7 @@ class MinefieldModel:
         self.height = height
         self.num_mines = num_mines
         self.mines_remaining = num_mines
+        self.cursor = (0, 0)
         self.minefield = np.full(shape=(width, height),
                                  fill_value=CellTypes.UNKNOWN,
                                  dtype=np.uint8)
@@ -34,6 +35,30 @@ class MinefieldModel:
             row = loc // self.width
             col = loc % self.height
             self.minefield[row][col] = CellTypes.MINE
+
+    def move_cursor_vertically(self, amount):
+        _h = self.height
+        _r = self.cursor[0]
+        _c = self.cursor[1]
+        if _r + amount >= _h:
+            _r = _h - 1
+        elif _r + amount < 0:
+            _r = 0
+        else:
+            _r += amount
+        self.cursor = (_r, _c)
+
+    def move_cursor_horizontally(self, amount):
+        _w = self.width
+        _r = self.cursor[0]
+        _c = self.cursor[1]
+        if _c + amount >= _w:
+            _c = _w - 1
+        elif _c + amount < 0:
+            _c = 0
+        else:
+            _c += amount
+        self.cursor = (_r, _c)
 
     def cell_is_revealed(self, row, col):
         return True if self.minefield[row][col] < 9 else False
