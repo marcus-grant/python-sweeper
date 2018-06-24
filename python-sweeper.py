@@ -2,7 +2,7 @@
 
 
 if __name__ == '__main__':
-    from game_controller import GameController
+    from gamecontroller import GameController
     #  from gameboard import GameBoard
     import argparse
     import sys
@@ -40,3 +40,4 @@ if __name__ == '__main__':
 
     #  GameBoard(board_width, board_height, num_mines)
     game_controller = GameController(board_width, board_height, num_mines)
+    game_controller.game_loop()
